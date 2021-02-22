@@ -1,6 +1,6 @@
 // standard libraries
-#include <stdio.h>
-
+// #include <stdio.h>
+#include <stdint.h>
 
 // pico libraries
 #include "pico/stdlib.h"
@@ -9,16 +9,11 @@
 
 // local libraries
 #include "motor_PWM.h"
-// #include "leg.h"
+#include "omni.h"
 // #include "vectors.h"
 
 // config files
 #include "config.h"
-
-const uint8_t LEGAPWM = 17;
-const uint8_t LEGADIR = 16;
-const uint8_t PIN_UNUSED = 2; // generic unconnected pin to pass as placeholder for future use
-
 
 /*
     UART code
@@ -90,8 +85,8 @@ int main() {
     motor_PWM led(25, PIN_UNUSED); // connection to on-boad LED for debugging use
     led.init(20000);
 
-    motor_PWM legA(LEGAPWM, LEGADIR);
-    legA.init(20000); // init at 20khz
+    Omni legA(__LEGA_PWM_PIN__, __LEGA_DIR_PIN__, __LEGA_ANGLE_RAD__, __OMNI_DIAMETER_MM__);
+    legA.init(20000);
 
     init_uart();
 
@@ -99,12 +94,11 @@ int main() {
     {
         if (commandAvailable)
         {
-            // led.set_duty_127(abs(command[1]));
             legA.drive_127(command[1]);
-            // legA.tone(440);
-
 
             commandAvailable = false; // clear flag after use
         }
+
+        tight_loop_contents();
     }
 }

@@ -1,3 +1,9 @@
+/*
+*   TODO: 
+    - Change constructors to use initialization fields so PWMPIN etc. can be const
+    - Implement PID
+*/
+
 #ifndef MOTOR_PWM_H
 #define MOTOR_PWM_H
 
