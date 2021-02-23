@@ -50,8 +50,13 @@ class motor_PWM {
         motor_PWM (uint _PWMPIN, uint _DIRPIN);
 
     private:
+        // pwm peripheral values
         uint slice_num, wrap, level;
+
+        // internal copy of hardware pins
         uint PWMPIN, DIRPIN, PHASE_A, PHASE_B;
+
+        // wether or not closed loop operation is enabled
         bool closed_loop;
     
 };

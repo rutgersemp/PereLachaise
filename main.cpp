@@ -45,33 +45,31 @@ void on_uart_rx() {
 
 void init_uart()
 {
+    // setup UART, low baud initially for convenience
     uart_init(UART_ID, 2400);
     gpio_set_function(UART_TX_PIN, GPIO_FUNC_UART);
     gpio_set_function(UART_RX_PIN, GPIO_FUNC_UART);
 
+    // configure remaining settings
     int actual = uart_set_baudrate(UART_ID, BAUD_RATE);
     uart_set_hw_flow(UART_ID, false, false);
-
     uart_set_format(UART_ID, DATA_BITS, STOP_BITS, PARITY);
 
-    // Turn off FIFO's - we want to do this character by character
+    // Disable FIFO
     uart_set_fifo_enabled(UART_ID, false);
 
-    // Set up a RX interrupt
-    // We need to set up the handler first
-    // Select correct interrupt for the UART we are using
+    // Set up a RX interrupt handler
     int UART_IRQ = UART_ID == uart0 ? UART0_IRQ : UART1_IRQ;
-
     irq_set_exclusive_handler(UART_IRQ, on_uart_rx);
     irq_set_enabled(UART_IRQ, true);
-
     uart_set_irq_enables(UART_ID, true, false);
 }
 
 
 int main() {
-    motor_PWM led(25, PIN_UNUSED); // connection to on-boad LED for debugging use
-    led.init(20000);
+    // // connection to on-boad LED for debugging purposes
+    // motor_PWM led(25, PIN_UNUSED); 
+    // led.init(20000);
 
     Omni legA(__LEGA_PWM_PIN__, __LEGA_DIR_PIN__, __LEGA_ANGLE_RAD__, __OMNI_DIAMETER_MM__);
     legA.init(20000);

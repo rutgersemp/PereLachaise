@@ -5,6 +5,10 @@
 #include <stdint.h>
 #include <algorithm>
 
+/*
+*   Class extends a motor driver class to include 'chair specific' aspects like wheel diameter and mounting angle
+*/
+
 class Omni : public motor_PWM {
     public:
         // constructor without quadrature input
