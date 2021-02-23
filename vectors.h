@@ -3,7 +3,7 @@
 
 #include <algorithm>
 // #include <complex>
-#include <ctgmath>
+#include <ctgmath> // includes math and complex behind the scenes
 #include <array>
 #include "config.h"
 #include "omni.h"
@@ -18,6 +18,8 @@ class Carriage
 {
     public:
         Carriage(std::array<Omni, __NUMBER_OF_LEGS__> & _wheels);
+
+        // takes a movementVector struct as input, consisting of 1 plane of translation and 1 axis of rotation
         void distribute(movementVector general_vector);
 
     private:
@@ -32,10 +34,22 @@ Carriage::Carriage(std::array<Omni, __NUMBER_OF_LEGS__> & _wheels) : wheels{_whe
 
 void Carriage::distribute(movementVector general_vector)
 {
-    std::array<float, __NUMBER_OF_LEGS__> translationals;
+    std::array<float, __NUMBER_OF_LEGS__> omnivectors;
+    float max_mag = 0;
+
     for (uint idx = 0; idx < __NUMBER_OF_LEGS__; idx++) // implemented without auto& : since array size is known and index is required anyway
     {
-        translationals[idx] = abs(general_vector.translation) * sin( wheels[idx].angle() - arg(general_vector.translation));
+        omnivectors[idx] = abs(general_vector.translation) * sin( wheels[idx].angle() - arg(general_vector.translation));
+        omnivectors[idx] = omnivectors[idx] - general_vector.rotation;
+        if (abs(omnivectors[idx]) > max_mag) max_mag = abs(omnivectors[idx]); // keep track of largest value
+    }
+
+    if (max_mag > 1.0) // one of the wheels needs to spin faster than possible, so renomalise to slow everything else down in stead
+    {
+        for (uint idx = 0; idx < __NUMBER_OF_LEGS__; idx++)
+        {
+            omnivectors[idx] = omnivectors[idx] / max_mag;
+        }
     }
 }
 
