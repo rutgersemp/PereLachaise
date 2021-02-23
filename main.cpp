@@ -15,18 +15,6 @@
 // config files
 #include "config.h"
 
-/*
-    UART code
-*/
-#define UART_ID uart0
-#define BAUD_RATE 115200
-#define DATA_BITS 8
-#define STOP_BITS 1
-#define PARITY    UART_PARITY_NONE
-
-#define UART_TX_PIN 0
-#define UART_RX_PIN 1
-
 volatile int8_t command[__NUMBER_OF_LEGS__]; // format is '!' int8_t int8_t int8_t ... '.', with first and last removed padding during receive
 volatile bool commandAvailable = false;
 
