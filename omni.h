@@ -13,6 +13,9 @@ class Omni : public motor_PWM {
         // constructor with quadrature input
         Omni(uint _PWMPIN, uint _DIRPIN, uint _PHASE_A, uint _PHASE_B, float _ANGLE, float _DIAMETER);
 
+        float angle();
+        float diameter();
+
     private:
         float ANGLE, DIAMETER;
 };
@@ -27,6 +30,16 @@ Omni::Omni(uint _PWMPIN, uint _DIRPIN, uint _PHASE_A, uint _PHASE_B, float _ANGL
 {
     ANGLE = _ANGLE;
     DIAMETER = _DIAMETER;
+}
+
+inline float Omni::angle()
+{
+    return ANGLE;
+}
+
+inline float Omni::diameter()
+{
+    return DIAMETER;
 }
 
 #endif

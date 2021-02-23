@@ -10,7 +10,7 @@
 // local libraries
 #include "motor_PWM.h"
 #include "omni.h"
-// #include "vectors.h"
+#include "vectors.h"
 
 // config files
 #include "config.h"
@@ -87,6 +87,13 @@ int main() {
 
     Omni legA(__LEGA_PWM_PIN__, __LEGA_DIR_PIN__, __LEGA_ANGLE_RAD__, __OMNI_DIAMETER_MM__);
     legA.init(20000);
+
+    std::array<Omni, __NUMBER_OF_LEGS__> wheels = {
+        legA,
+        legA,
+        legA
+    };
+    Carriage chair(wheels);
 
     init_uart();
 
