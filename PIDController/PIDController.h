@@ -9,11 +9,16 @@ class PIDController : public IPIDController{
         unsigned int _kI{0};
         unsigned int _kD{0};
         unsigned int _dt{0};
-        unsigned int _output{0};
+        int _output{0};
+        int _lastError{0};
+        long _errorSum{0};
+        
 
-        PIDErrorStatus _calculateProportional   (void);
-        PIDErrorStatus _calculateIntegral       (void);
-        PIDErrorStatus _calculateDerivative     (void);
+
+
+        PIDErrorStatus _calculateProportional   (const int setPoint, const int input);
+        PIDErrorStatus _calculateIntegral       (const int setPoint, const int input);
+        PIDErrorStatus _calculateDerivative     (const int setPoint, const int input);
 
     public:
         PIDController(){}
@@ -25,7 +30,7 @@ class PIDController : public IPIDController{
         PIDErrorStatus setDGain         (const unsigned int kD) override;
         PIDErrorStatus setTimeInterval  (const unsigned int dt) override;
 
-        PIDErrorStatus getPIDOutput     (const int setPoint, const int error, int & output) override;
+        PIDErrorStatus getPIDOutput     (const int setPoint, const int input, int & output) override;
 };
 
 
