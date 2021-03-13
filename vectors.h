@@ -44,12 +44,20 @@ void Carriage::distribute(movementVector general_vector)
         if (abs(omnivectors[idx]) > max_mag) max_mag = abs(omnivectors[idx]); // keep track of largest value
     }
 
-    if (max_mag > 1.0) // one of the wheels needs to spin faster than possible, so renomalise to slow everything else down in stead
+    // if one of the wheels needs to spin faster than possible, slow everything else down to compensate
+    // this step cannot be done until all speeds are known, thus needs to be in a separate loop
+    if (max_mag > 1.0) 
     {
         for (uint idx = 0; idx < __NUMBER_OF_LEGS__; idx++)
         {
             omnivectors[idx] = omnivectors[idx] / max_mag;
         }
+    }
+
+    // finally, set duty cycles
+    for (uint idx = 0; idx < __NUMBER_OF_LEGS__; idx++)
+    {
+        wheels[idx].set_duty_1000( 1000.0* omnivectors[idx]);
     }
 }
 

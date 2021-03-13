@@ -31,6 +31,9 @@ class motor_PWM {
         // set duty cycle magnitude of signed byte ([0, 127])
         void set_duty_127(int8_t byte);
 
+        // set duty cycle magnitude of normalized float ([0.0, 1.0])
+        void set_duty_norm(float norm);
+
         // set output direction of driver
         void set_direction(bool clockwise);
 
@@ -39,6 +42,9 @@ class motor_PWM {
 
         // drive PWM and DIR pins based on signed byte ([-1000, 1000])
         void drive_1000(uint permille);
+
+        // drive PWM and DIR pins based on normalized float ([0.0, 1.0])
+        void drive_norm(float norm);
 
         // generate audible tone without inducing (additional) movement
         void tone(unsigned long F);
@@ -94,6 +100,12 @@ void motor_PWM::set_duty_127(int8_t byte)
     pwm_set_gpio_level(PWMPIN, level);
 }
 
+void motor_PWM::set_duty_norm(float norm)
+{
+    level = norm * float(wrap);
+    pwm_set_gpio_level(PWMPIN, level);
+}
+
 void motor_PWM::set_direction(bool clockwise)
 {
     gpio_put(DIRPIN, clockwise);
@@ -110,6 +122,13 @@ void motor_PWM::drive_127(int8_t drive)
 // {
 //     // not implemented
 // }
+
+void motor_PWM::drive_norm(float drive)
+{
+    // simple boolean check for sign
+    set_direction( (drive > 0) );
+    set_duty_norm( abs(drive));
+}
 
 // // modulate a jitter of a particular frequency onto the drive signal, creating a tone
 // void motor_PWM::tone(unsigned long F)
