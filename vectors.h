@@ -57,7 +57,7 @@ void Carriage::distribute(movementVector general_vector)
     // finally, set duty cycles
     for (uint idx = 0; idx < __NUMBER_OF_LEGS__; idx++)
     {
-        wheels[idx].set_duty_1000( 1000.0* omnivectors[idx]);
+        wheels[idx].drive_norm(omnivectors[idx]);
     }
 }
 
