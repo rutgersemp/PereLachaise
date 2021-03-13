@@ -10,7 +10,7 @@
 // local libraries
 #include "motor_PWM.h"
 #include "omni.h"
-// #include "vectors.h"
+#include "vectors.h"
 
 // config files
 #include "config.h"
@@ -21,16 +21,22 @@ volatile bool commandAvailable = false;
 void on_uart_rx() {
     static uint8_t count = 0;
     while (uart_is_readable(UART_ID)) {
-        uint8_t ch = uart_getc(UART_ID);
+        int8_t XYRbyte = uart_getc(UART_ID);
 
-        if (ch == '!') count = 1;
-        else if (ch == '.' && count == 4)
+        // start of message received, set counter to start regardless of what else we were doing
+        if ((char)XYRbyte == '!') count = 1;
+
+        // end of message received at expected count, assuming valid command
+        // reset counter and set message flag
+        else if ((char)XYRbyte == '.' && count == 4)
         {
             count = 0;
             commandAvailable = true;
         }
+
+        // count in middle of message, store bytes as received
         else if (count > 0 && count < 4) {
-            command[count-1] = ch;
+            command[count-1] = XYRbyte;
             count++;
         }
         else
@@ -74,13 +80,41 @@ int main() {
     Omni legA(__LEGA_PWM_PIN__, __LEGA_DIR_PIN__, __LEGA_ANGLE_RAD__, __OMNI_DIAMETER_MM__);
     legA.init(20000);
 
+    Omni legB(__LEGB_PWM_PIN__, __LEGB_DIR_PIN__, __LEGB_ANGLE_RAD__, __OMNI_DIAMETER_MM__);
+    legB.init(20000);
+
+    Omni legC(__LEGC_PWM_PIN__, __LEGC_DIR_PIN__, __LEGC_ANGLE_RAD__, __OMNI_DIAMETER_MM__);
+    legC.init(20000);
+
+    std::array<Omni, __NUMBER_OF_LEGS__> wheels = {
+        legA,
+        legB,
+        legC
+    };
+    Carriage chair(wheels);
+
     init_uart();
 
     while (1)
     {
         if (commandAvailable)
         {
-            legA.drive_127(command[1]);
+
+            float command_norm[3] = {
+                command[0]/127.0,
+                command[1]/127.0,
+                command[2]/127.0
+                };
+
+            // legA.drive_norm(command_norm[0]);
+            // legB.drive_norm(command_norm[1]);
+            // legC.drive_norm(command_norm[2]);
+
+            std::complex<double> translate(command_norm[0], command_norm[1]);
+            movementVector general;
+            general.translation = translate;
+            general.rotation = command_norm[2];
+            chair.distribute(general);
 
             commandAvailable = false; // clear flag after use
         }
