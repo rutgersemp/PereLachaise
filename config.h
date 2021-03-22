@@ -25,6 +25,8 @@ const float   __LEGA_ANGLE_RAD__ = 90.0 * DEG2RAD;
 
 const uint8_t __LEGB_PWM_PIN__ = 21;
 const uint8_t __LEGB_DIR_PIN__ = 20;
+const uint8_t __LEGB_CHA_PIN__ = 15;
+const uint8_t __LEGB_CHB_PIN__ = 14;
 const float   __LEGB_ANGLE_RAD__ = -30.0 * DEG2RAD;
 
 const uint8_t __LEGC_PWM_PIN__ = 16;
